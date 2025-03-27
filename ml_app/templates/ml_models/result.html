@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ model_name }} Results - ML Project</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ model_name }} Results</h1>
+        
+        <div class="model-description">
+            <h2>Description</h2>
+            <p>{{ description }}</p>
+        </div>
+        
+        <div class="result-container">
+            <h2>Model Results with Custom Data</h2>
+            
+            {% if model_name == 'Simple Linear Regression' or model_name == 'Multiple Linear Regression' or model_name == 'Polynomial Regression' %}
+                <div class="metrics">
+                    <p>Mean Squared Error: <span class="metric">{{ result.mse }}</span></p>
+                    <p>R² Score: <span class="metric">{{ result.r2 }}</span></p>
+                    
+                    {% if model_name == 'Polynomial Regression' %}
+                        <p>Polynomial Degree: <span class="metric">{{ result.degree }}</span></p>
+                    {% endif %}
+                    
+                    {% if model_name == 'Multiple Linear Regression' %}
+                        <h3>Feature Importance</h3>
+                        <ul>
+                            {% for feature, importance in result.importance.items %}
+                                <li>{{ feature }}: <span class="metric">{{ importance }}</span></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="metrics">
+                    <p>Accuracy: <span class="metric">{{ result.accuracy }}</span></p>
+                    
+                    {% if model_name == 'K-Nearest Neighbors' %}
+                        <p>Number of Neighbors: <span class="metric">{{ result.n_neighbors }}</span></p>
+                    {% endif %}
+                    
+                    {% if model_name == 'Logistic Regression' %}
+                        <h3>Feature Importance</h3>
+                        <ul>
+                            {% for feature, importance in result.importance.items %}
+                                <li>{{ feature }}: <span class="metric">{{ importance }}</span></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            <div class="plot-container">
+                <img src="data:image/png;base64,{{ result.plot }}" alt="Model Visualization">
+            </div>
+        </div>
+        
+        <a href="{% url 'home' %}" class="back-link">← Back to Model Selection</a>
+    </div>
+</body>
+</html> 

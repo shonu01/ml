@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}ML Model Selection{% endblock %}
+
+{% block content %}
+<div class="header" style="text-align: center; margin-bottom: 30px;">
+    <h1>Machine Learning Model Explorer</h1>
+    <p>Select a machine learning model to analyze data, train the model, and evaluate its performance. Each model comes with sample data you can use to experiment.</p>
+</div>
+
+<div class="models-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+    {% for model in models %}
+    <div class="model-card" style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; background-color: white;">
+        <h3 style="color: #2196f3; margin-top: 0;">{{ model.name }}</h3>
+        <div class="model-description" style="height: 120px; overflow: auto; margin-bottom: 15px; color: #555;">
+            {{ model.description }}
+        </div>
+        <div class="model-tags" style="margin-bottom: 15px;">
+            {% if 'Health' in model.name %}
+                <span class="tag" style="display: inline-block; background-color: #e3f2fd; padding: 5px 10px; border-radius: 50px; font-size: 0.8em; color: #1976d2; margin-right: 5px;">Health</span>
+            {% endif %}
+            
+            {% if 'SLR' in model.name or 'MLR' in model.name or model.id == 'logr' %}
+                <span class="tag" style="display: inline-block; background-color: #e3f2fd; padding: 5px 10px; border-radius: 50px; font-size: 0.8em; color: #1976d2; margin-right: 5px;">Regression</span>
+            {% endif %}
+            
+            {% if model.id == 'logr' or model.id == 'knn' %}
+                <span class="tag" style="display: inline-block; background-color: #f3e5f5; padding: 5px 10px; border-radius: 50px; font-size: 0.8em; color: #7b1fa2; margin-right: 5px;">Classification</span>
+            {% endif %}
+            
+            {% if 'SLR' in model.name %}
+                <span class="tag" style="display: inline-block; background-color: #e8f5e9; padding: 5px 10px; border-radius: 50px; font-size: 0.8em; color: #388e3c; margin-right: 5px;">Simple</span>
+            {% endif %}
+            
+            {% if 'Polynomial' in model.name %}
+                <span class="tag" style="display: inline-block; background-color: #fff3e0; padding: 5px 10px; border-radius: 50px; font-size: 0.8em; color: #e65100; margin-right: 5px;">Non-linear</span>
+            {% endif %}
+        </div>
+        <a href="{% url 'run_model' model.id %}" class="btn" style="display: inline-block; background-color: #2196f3; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px; text-align: center; transition: background-color 0.3s;">Run Model</a>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="info-section" style="margin-top: 40px; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
+    <h2>About This Application</h2>
+    <p>This application demonstrates several popular machine learning algorithms for both regression and classification tasks:</p>
+    <ul>
+        <li><strong>Health Predictors</strong> estimate your health score based on various health metrics</li>
+        <li><strong>Regression models</strong> predict continuous values (like price, temperature, etc.)</li>
+        <li><strong>Classification models</strong> predict categorical values (like yes/no, types of flowers, etc.)</li>
+    </ul>
+    <p>Each model comes with pre-formatted sample data that you can use immediately or modify for your own datasets. The application provides visualization and evaluation metrics to help you understand the performance of each model.</p>
+</div>
+{% endblock %}
