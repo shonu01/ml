@@ -13,6 +13,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import Pipeline
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -26,7 +28,7 @@ def home(request):
         {'id': 'knn', 'name': 'Health Group Classifier (KNN)', 'description': 'Classifies your health into similarity groups based on your health metrics. Uses K-Nearest Neighbors.'},
     ]
     
-    return render(request, 'home.html', {'models': models})
+    return render(request, 'ml_models/home.html', {'models': models})
 
 def run_model(request, model_id):
     """
@@ -72,12 +74,6 @@ def run_model(request, model_id):
         elif model_name == 'Advanced Health Predictor (Polynomial)':
             form_data = {
                 'age': request.POST.get('age', ''),
-                'weight': request.POST.get('weight', ''),
-                'height': request.POST.get('height', ''),
-                'exercise_hours': request.POST.get('exercise_hours', ''),
-                'stress_level': request.POST.get('stress_level', ''),
-                'sleep_hours': request.POST.get('sleep_hours', ''),
-                'chronic_conditions': request.POST.get('chronic_conditions', ''),
                 'polynomial_degree': request.POST.get('polynomial_degree', '2')
             }
             result = predict_health_with_poly(request)
@@ -125,6 +121,8 @@ def run_model(request, model_id):
                 except Exception as e:
                     logging.error(f"Error running model {model_id}: {str(e)}")
                     result = {"error": str(e)}
+            else:
+                result = {"error": "No input data provided"}
     
     context = {
         'model_name': model_name,
@@ -242,7 +240,7 @@ def process_input_data(model_name, input_data, **kwargs):
             from sklearn.preprocessing import LabelEncoder
             le = LabelEncoder()
             y = le.fit_transform(df['species'])
-            
+        
             # Scale features
             X = ml_utils.scale_features(X)
             n_neighbors = kwargs.get('n_neighbors', 3)
@@ -516,22 +514,12 @@ def predict_health_with_slr(request):
     try:
         # Get form data
         age = float(request.POST.get('age', 0))
-        weight = float(request.POST.get('weight', 0))
-        height = float(request.POST.get('height', 0))
-        exercise_hours = float(request.POST.get('exercise_hours', 0))
         
-        # Validate inputs
+        # Validate input
         if age < 18 or age > 100:
             return {"error": "Age must be between 18 and 100 years."}
-        if weight < 40 or weight > 200:
-            return {"error": "Weight must be between 40 and 200 kg."}
-        if height < 120 or height > 220:
-            return {"error": "Height must be between 120 and 220 cm."}
-        if exercise_hours < 0 or exercise_hours > 20:
-            return {"error": "Exercise hours must be between 0 and 20 hours per week."}
         
-        # Create a feature array from user inputs
-        # Using only age as predictor for demonstration
+        # Create a feature array from user input
         user_input = np.array([[age]])
         
         # Create some synthetic training data
@@ -565,11 +553,7 @@ def predict_health_with_slr(request):
             'equation': equation,
             'category': category,
             'age': age,
-            'weight': weight,
-            'height': height,
-            'exercise_hours': exercise_hours,
-            'direct_input': True,
-            'as_bp_predictor': True
+            'direct_input': True
         }
         
         return result
@@ -686,175 +670,71 @@ def predict_health_with_mlr(request):
 
 def predict_health_with_poly(request):
     """
-    Predict health score using Polynomial Regression based on multiple health factors
+    Predict health score using Polynomial Regression based on age
     """
     try:
         # Get form data
         age = float(request.POST.get('age', 0))
-        weight = float(request.POST.get('weight', 0))
-        height = float(request.POST.get('height', 0))
-        exercise_hours = float(request.POST.get('exercise_hours', 0))
-        stress_level = float(request.POST.get('stress_level', 5))
-        sleep_hours = float(request.POST.get('sleep_hours', 7))
-        chronic_conditions = float(request.POST.get('chronic_conditions', 0))
         polynomial_degree = int(request.POST.get('polynomial_degree', 2))
         
-        # Validate inputs
+        # Validate input
         if age < 18 or age > 100:
             return {"error": "Age must be between 18 and 100 years."}
-        if weight < 40 or weight > 200:
-            return {"error": "Weight must be between 40 and 200 kg."}
-        if height < 120 or height > 220:
-            return {"error": "Height must be between 120 and 220 cm."}
-        if exercise_hours < 0 or exercise_hours > 20:
-            return {"error": "Exercise hours must be between 0 and 20 hours per week."}
-        if stress_level < 1 or stress_level > 10:
-            return {"error": "Stress level must be between 1 and 10."}
-        if sleep_hours < 4 or sleep_hours > 12:
-            return {"error": "Sleep hours must be between 4 and 12 hours per day."}
-        if chronic_conditions < 0 or chronic_conditions > 5:
-            return {"error": "Chronic conditions must be between 0 and 5."}
         if polynomial_degree < 1 or polynomial_degree > 5:
-            polynomial_degree = 2  # Default to quadratic if invalid
+            return {"error": "Polynomial degree must be between 1 and 5."}
         
-        # Calculate BMI
-        height_m = height / 100
-        bmi = round(weight / (height_m * height_m), 1)
+        # Create a feature array from user input
+        user_input = np.array([[age]])
         
-        # Create a synthetic dataset for training the model
-        np.random.seed(42)  # For reproducibility
+        # Create synthetic training data
+        ages = np.array([20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70]).reshape(-1, 1)
+        health_scores = np.array([90, 88, 86, 84, 82, 80, 78, 76, 74, 72, 70])
         
-        # Generate a larger synthetic dataset
-        n_samples = 500
-        
-        # Generate synthetic data with more realistic distributions
-        synthetic_ages = np.random.normal(40, 15, n_samples).clip(18, 100)
-        synthetic_bmis = np.random.normal(25, 5, n_samples).clip(15, 45)
-        synthetic_exercise = np.random.gamma(shape=2, scale=1.5, size=n_samples).clip(0, 20)
-        synthetic_stress = np.random.normal(5, 2, n_samples).clip(1, 10)
-        synthetic_sleep = np.random.normal(7, 1.5, n_samples).clip(4, 12)
-        synthetic_chronic = np.random.poisson(0.8, n_samples).clip(0, 5)
-        
-        # Create feature matrix with some realistic correlations
-        X = np.column_stack([
-            synthetic_ages,
-            synthetic_bmis,
-            synthetic_exercise,
-            synthetic_stress,
-            synthetic_sleep,
-            synthetic_chronic
-        ])
-        
-        # Generate health scores with non-linear relationships
-        base_scores = (
-            -0.3 * (synthetic_ages - 40) ** 2 / 400 +  # Quadratic relationship with age (peak at 40)
-            -0.2 * (synthetic_bmis - 22) ** 2 +        # Quadratic relationship with BMI (best around 22)
-            3 * synthetic_exercise -                   # Linear relationship with exercise
-            -0.1 * synthetic_exercise ** 2 +           # Diminishing returns for exercise
-            -2 * synthetic_stress +                    # Linear negative relationship with stress
-            2 * synthetic_sleep +                      # Linear relationship with sleep
-            -5 * synthetic_chronic                     # Linear negative relationship with chronic conditions
-        )
-        
-        # Scale to health score range
-        min_score, max_score = base_scores.min(), base_scores.max()
-        synthetic_scores = 100 * (base_scores - min_score) / (max_score - min_score)
-        
-        # Add some noise
-        synthetic_scores += np.random.normal(0, 5, n_samples)
-        synthetic_scores = np.clip(synthetic_scores, 0, 100)
-        
-        # Create the polynomial features
-        from sklearn.preprocessing import PolynomialFeatures, StandardScaler
-        from sklearn.linear_model import LinearRegression
-        from sklearn.pipeline import Pipeline
-        from sklearn.metrics import mean_squared_error, r2_score
-        
-        # Create a pipeline with scaling, polynomial features, and linear regression
-        poly_pipeline = Pipeline([
-            ('scaler', StandardScaler()),
-            ('poly', PolynomialFeatures(degree=polynomial_degree, include_bias=False)),
-            ('regression', LinearRegression())
-        ])
+        # Create polynomial features
+        poly = PolynomialFeatures(degree=polynomial_degree)
+        X_train_poly = poly.fit_transform(ages)
+        user_input_poly = poly.transform(user_input)
         
         # Train the model
-        poly_pipeline.fit(X, synthetic_scores)
-        
-        # Prepare the input data
-        user_data = np.array([[age, bmi, exercise_hours, stress_level, sleep_hours, chronic_conditions]])
+        model = LinearRegression()
+        model.fit(X_train_poly, health_scores)
         
         # Make prediction
-        health_score = poly_pipeline.predict(user_data)[0]
-        health_score = round(max(0, min(100, health_score)), 1)  # Ensure score is between 0 and 100
+        prediction = float(model.predict(user_input_poly)[0])
         
-        # Determine health category
-        if health_score >= 90:
-            category = "Excellent"
-        elif health_score >= 80:
-            category = "Very Good"
-        elif health_score >= 70:
-            category = "Good"
-        elif health_score >= 60:
-            category = "Fair"
-        else:
-            category = "Poor"
+        # Get coefficients for equation
+        coef = model.coef_
+        intercept = model.intercept_
         
-        # Extract model coefficients
-        poly_features = poly_pipeline.named_steps['poly']
-        regression = poly_pipeline.named_steps['regression']
+        # Generate equation string
+        equation_terms = []
+        for i, c in enumerate(coef[1:]):  # Skip the constant term
+            if abs(c) > 1e-10:  # Only include non-zero terms
+                term = f"{c:.2f}*Age^{i+1}"
+                if i == 0 or c < 0:
+                    equation_terms.append(term)
+                else:
+                    equation_terms.append(f"+ {term}")
         
-        # Get feature names after polynomial transformation
-        feature_names = ['Age', 'BMI', 'Exercise', 'Stress', 'Sleep', 'Chronic']
-        poly_feature_names = poly_features.get_feature_names_out(['Age', 'BMI', 'Exercise', 'Stress', 'Sleep', 'Chronic'])
+        equation = f"Health Score = {intercept:.4f} {' '.join(equation_terms)}"
         
-        # Create a simplified equation for display (first few terms)
-        def format_term(coef, name):
-            if abs(coef) < 0.01:
-                return ""
-            if name == "1":
-                return f"{coef:.2f}"
-            return f"{coef:.2f}*{name}"
+        # Classify health score
+        category = classify_health_score(prediction)
         
-        coefficients = regression.coef_
-        terms = [format_term(coef, name) for coef, name in zip(coefficients, poly_feature_names) if abs(coef) > 0.01]
-        equation = f"{regression.intercept_:.2f} + " + " + ".join([t for t in terms[:5] if t])
-        if len(terms) > 5:
-            equation += " + ..."
-        
-        # Calculate feature importance for original features
-        # This is a simplified approach for polynomial regression
-        importance = {}
-        for i, feature in enumerate(feature_names):
-            # Find all terms containing this feature
-            feature_terms = [j for j, name in enumerate(poly_feature_names) if feature.lower() in name.lower()]
-            # Sum the absolute coefficients for these terms
-            importance_value = sum(abs(coefficients[j]) for j in feature_terms)
-            importance[feature] = round(importance_value, 2)
-        
-        # Normalize importances
-        total_importance = sum(importance.values())
-        if total_importance > 0:
-            importance = {k: round(v/total_importance * 10, 2) for k, v in importance.items()}
-        
-        return {
-            'health_score': health_score,
+        # Create result dictionary
+        result = {
+            'health_score': round(prediction, 1),
+            'equation': equation,
             'category': category,
             'age': age,
-            'bmi': bmi,
-            'exercise_hours': exercise_hours,
-            'stress_level': stress_level,
-            'sleep_hours': sleep_hours,
-            'chronic_conditions': chronic_conditions,
             'polynomial_degree': polynomial_degree,
-            'equation': equation,
-            'importance': importance
+            'direct_input': True
         }
-    
-    except ValueError as e:
-        logging.error(f"ValueError in health prediction: {str(e)}")
-        return {"error": "Please ensure all fields contain valid numeric values."}
+        
+        return result
+        
     except Exception as e:
-        logging.error(f"Error in health prediction: {str(e)}")
+        logger.error(f"Error in polynomial health prediction: {str(e)}\n{traceback.format_exc()}")
         return {"error": f"An error occurred: {str(e)}"}
 
 def predict_health_with_logr(request):

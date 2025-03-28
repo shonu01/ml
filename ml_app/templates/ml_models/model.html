@@ -44,34 +44,14 @@
         {% csrf_token %}
         
         {% if model_name == 'Health Score Predictor (SLR)' %}
-        <div class="form-group" style="max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div class="form-group" style="max-width: 400px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
             <h3 style="text-align: center; color: #2196f3; margin-bottom: 20px;">Health Information</h3>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div style="margin-bottom: 20px;">
                 <div>
                     <label for="age" style="display: block; margin-bottom: 5px; font-weight: bold;">Age (years)*</label>
                     <input type="number" id="age" name="age" min="18" max="100" value="{{ form_data.age }}" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                     <small>Range: 18-100 years</small>
-                </div>
-                
-                <div>
-                    <label for="weight" style="display: block; margin-bottom: 5px; font-weight: bold;">Weight (kg)*</label>
-                    <input type="number" id="weight" name="weight" min="40" max="200" step="0.1" value="{{ form_data.weight }}" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <small>Range: 40-200 kg</small>
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                <div>
-                    <label for="height" style="display: block; margin-bottom: 5px; font-weight: bold;">Height (cm)*</label>
-                    <input type="number" id="height" name="height" min="120" max="220" step="0.1" value="{{ form_data.height }}" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <small>Range: 120-220 cm</small>
-                </div>
-                
-                <div>
-                    <label for="exercise_hours" style="display: block; margin-bottom: 5px; font-weight: bold;">Exercise (hours/week)*</label>
-                    <input type="number" id="exercise_hours" name="exercise_hours" min="0" max="20" step="0.5" value="{{ form_data.exercise_hours }}" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <small>Range: 0-20 hours</small>
                 </div>
             </div>
             
@@ -135,62 +115,18 @@
             </div>
         </div>
         {% elif model_name == 'Advanced Health Predictor (Polynomial)' %}
-        <div class="form-group" style="max-width: 800px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-            <h3 style="text-align: center; color: #2196f3; margin-bottom: 20px;">Advanced Health Information</h3>
+        <div class="form-group" style="max-width: 400px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h3 style="text-align: center; color: #2196f3; margin-bottom: 20px;">Health Information</h3>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div style="margin-bottom: 20px;">
                 <div>
                     <label for="age" style="display: block; margin-bottom: 5px; font-weight: bold;">Age (years)*</label>
                     <input type="number" id="age" name="age" min="18" max="100" value="{{ form_data.age }}" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                     <small>Range: 18-100 years</small>
                 </div>
-                
-                <div>
-                    <label for="weight" style="display: block; margin-bottom: 5px; font-weight: bold;">Weight (kg)*</label>
-                    <input type="number" id="weight" name="weight" min="40" max="200" step="0.1" value="{{ form_data.weight }}" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <small>Range: 40-200 kg</small>
-                </div>
             </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                <div>
-                    <label for="height" style="display: block; margin-bottom: 5px; font-weight: bold;">Height (cm)*</label>
-                    <input type="number" id="height" name="height" min="120" max="220" step="0.1" value="{{ form_data.height }}" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <small>Range: 120-220 cm</small>
-                </div>
-                
-                <div>
-                    <label for="exercise_hours" style="display: block; margin-bottom: 5px; font-weight: bold;">Exercise (hours/week)*</label>
-                    <input type="number" id="exercise_hours" name="exercise_hours" min="0" max="20" step="0.5" value="{{ form_data.exercise_hours }}" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <small>Range: 0-20 hours</small>
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                <div>
-                    <label for="stress_level" style="display: block; margin-bottom: 5px; font-weight: bold;">Stress Level (1-10)*</label>
-                    <input type="range" id="stress_level" name="stress_level" min="1" max="10" value="{{ form_data.stress_level|default:'5' }}" class="form-control" required style="width: 100%;">
-                    <div style="display: flex; justify-content: space-between;">
-                        <small>Low</small>
-                        <small>Medium</small>
-                        <small>High</small>
-                    </div>
-                </div>
-                
-                <div>
-                    <label for="sleep_hours" style="display: block; margin-bottom: 5px; font-weight: bold;">Sleep (hours/day)*</label>
-                    <input type="number" id="sleep_hours" name="sleep_hours" min="4" max="12" step="0.5" value="{{ form_data.sleep_hours }}" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <small>Range: 4-12 hours</small>
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                <div>
-                    <label for="chronic_conditions" style="display: block; margin-bottom: 5px; font-weight: bold;">Chronic Conditions*</label>
-                    <input type="number" id="chronic_conditions" name="chronic_conditions" min="0" max="5" value="{{ form_data.chronic_conditions|default:'0' }}" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <small>Number of chronic health conditions (0-5)</small>
-                </div>
-                
+
+            <div style="margin-bottom: 20px;">
                 <div>
                     <label for="polynomial_degree" style="display: block; margin-bottom: 5px; font-weight: bold;">Model Complexity</label>
                     <select id="polynomial_degree" name="polynomial_degree" class="form-control" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
@@ -200,13 +136,12 @@
                         <option value="4" {% if form_data.polynomial_degree == '4' %}selected{% endif %}>Quartic (Degree 4)</option>
                         <option value="5" {% if form_data.polynomial_degree == '5' %}selected{% endif %}>Quintic (Degree 5)</option>
                     </select>
-                    <small>Higher degrees can model more complex health relationships</small>
                 </div>
             </div>
             
             <div style="text-align: center; margin-top: 10px;">
                 <p><em>* All fields are required</em></p>
-                <p><small>This advanced model uses polynomial regression to capture complex, non-linear relationships in your health data.</small></p>
+                <p><small>Choose the polynomial degree to control the model's complexity.</small></p>
             </div>
         </div>
         {% elif model_name == 'Health Risk Classifier (LogR)' %}
@@ -357,7 +292,7 @@
                     <small>Range: 1-20 (larger values create smoother decision boundaries)</small>
                 </div>
             </div>
-            
+        
             <div style="text-align: center; margin-top: 10px;">
                 <p><em>* All fields are required</em></p>
                 <p><small>This model uses K-Nearest Neighbors to classify your health based on similarity to known health profiles.</small></p>
@@ -406,7 +341,7 @@
                 <input type="number" name="neighbors" id="neighbors" min="1" max="20" value="3" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                 <small>Smaller values create detailed boundaries but may overfit; larger values create smoother boundaries. Range: 1-20</small>
             </div>
-        </div>
+            </div>
         {% endif %}
         
         <div style="text-align: center; margin-top: 20px;">
@@ -479,7 +414,7 @@
         </div>
     </div>
     {% elif model_name == 'Advanced Health Predictor (MLR)' %}
-    <div class="metrics">
+        <div class="metrics">
         <div style="text-align: center; margin-bottom: 20px;">
             <h3>Your Advanced Health Score Prediction</h3>
             <div style="font-size: 2.5rem; margin: 15px 0;">
@@ -570,7 +505,7 @@
                 
                 {% if result.diet_quality < 6 %}
                 <li><strong>Enhance diet quality:</strong> Increase intake of fruits, vegetables, and whole grains</li>
-                {% endif %}
+            {% endif %}
                 
                 <li><strong>Stress management:</strong> Practice mindfulness, meditation, or other relaxation techniques</li>
                 <li><strong>Regular check-ups:</strong> Schedule routine health screenings and preventive care</li>
@@ -579,7 +514,7 @@
         </div>
     </div>
     {% elif model_name == 'Health Group Classifier (KNN)' %}
-    <div class="metrics">
+        <div class="metrics">
         <div style="text-align: center; margin-bottom: 20px;">
             <h3>Your Health Group Classification</h3>
             <div style="font-size: 2rem; margin: 15px 0; font-weight: bold; 
@@ -739,7 +674,68 @@
                 <p style="margin-top: 10px; font-size: 0.9em;">Higher absolute values indicate greater importance. Positive values indicate positive correlation.</p>
             </div>
         </div>
-        {% endif %}
+            {% endif %}
+        </div>
+    {% elif model_name == 'Advanced Health Predictor (Polynomial)' %}
+    <div class="metrics">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h3>Your Non-Linear Health Score Prediction</h3>
+            <div style="font-size: 2.5rem; margin: 15px 0;">
+                <strong>{{ result.health_score }}</strong>
+            </div>
+            <div style="font-size: 1.2rem; 
+                       color: {% if result.category == 'Excellent' or result.category == 'Very Good' %}#4caf50{% elif result.category == 'Good' %}#ff9800{% else %}#f44336{% endif %}; 
+                       padding: 5px 15px; 
+                       border-radius: 20px; 
+                       display: inline-block;
+                       font-weight: bold;
+                       background-color: {% if result.category == 'Excellent' or result.category == 'Very Good' %}#e8f5e9{% elif result.category == 'Good' %}#fff3e0{% else %}#ffebee{% endif %};">
+                {{ result.category }}
+            </div>
+        </div>
+        
+        <div style="max-width: 800px; margin: 20px auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+            <div style="flex: 1; min-width: 160px; max-width: 180px; background-color: white; border-radius: 10px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center;">
+                <h4 style="color: #2196f3; margin-top: 0; margin-bottom: 10px;">Age</h4>
+                <div style="font-size: 1.4rem; font-weight: bold;">{{ result.age }}</div>
+                <div style="font-size: 0.9rem; color: #666;">years</div>
+            </div>
+            
+            <div style="flex: 1; min-width: 160px; max-width: 180px; background-color: white; border-radius: 10px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center;">
+                <h4 style="color: #2196f3; margin-top: 0; margin-bottom: 10px;">Model Complexity</h4>
+                <div style="font-size: 1.4rem; font-weight: bold;">Degree {{ result.polynomial_degree }}</div>
+                <div style="font-size: 0.9rem; color: #666;">polynomial</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <h3>Understanding Your Result</h3>
+            <p>Your health score is predicted using a polynomial regression model that can capture non-linear relationships between age and health.</p>
+            <p>The model equation is: <strong>{{ result.equation }}</strong></p>
+            
+            <div style="margin-top: 15px;">
+                <h4>Health Score Categories:</h4>
+                <ul>
+                    <li><strong>Excellent:</strong> 90-100</li>
+                    <li><strong>Very Good:</strong> 80-89</li>
+                    <li><strong>Good:</strong> 70-79</li>
+                    <li><strong>Fair:</strong> 60-69</li>
+                    <li><strong>Poor:</strong> Below 60</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 15px; background-color: #f1f8e9; border-radius: 5px; border-left: 4px solid #8bc34a;">
+            <h4>Health Tips</h4>
+            <ul>
+                <li>Regular exercise can improve your overall health</li>
+                <li>Maintain a healthy diet rich in fruits and vegetables</li>
+                <li>Stay hydrated and get enough sleep</li>
+                <li>Manage stress through meditation, yoga, or other relaxation techniques</li>
+                <li>Get regular health check-ups</li>
+            </ul>
+            <p><em>Note: This is a sophisticated prediction model that can capture complex age-related health patterns, but it should not replace medical advice.</em></p>
+        </div>
     </div>
     {% endif %}
 </div>
